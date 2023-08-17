@@ -10,11 +10,8 @@ open_orders = pd.read_excel("input.xlsx", sheet_name="OO")
 inventory = pd.read_excel("input.xlsx", sheet_name="INV")
 
 # Delete unwanted columns
-columns_to_delete = ["Price", "Extension", "Ship Date", "quantityreserved", "Job Summary for Sales", "soquant",
-                     "Axiom PO1", "Old ID", "Shipped", "Serial", "qtyatrisk", "Order Type", "pickquant", "Reorder2",
-                     "Carbon $"]
-for i in columns_to_delete:
-    open_orders.drop(i, axis=1, inplace=True)
+columns_to_delete = []
+open_orders.drop(columns_to_delete, axis=1, inplace=True)
 
 df_list = list(open_orders.columns)
 
@@ -89,29 +86,30 @@ class Main(tk.Frame):
         self.parent = parent
 
         # Create and layout your main widgets here
-
         self.label_frame = tk.Frame(self)
         self.label_frame.pack(side='top', fill='x', expand=False)
 
         self.main_label = tk.Label(self.label_frame, text="Main Area")
         self.inv_label = tk.Label(self.label_frame, text="Inventory Info")
 
+
+        # Create Length Range Labels
         less_than_or_equal_to = '\u2264'
         greater_than_or_equal_to = '\u2265'
-        self.range_label1 = tk.Label(self.label_frame, text="x < 18'" + "\nbottom text", relief="solid", borderwidth=1, width=15)
-        self.range_label2 = tk.Label(self.label_frame, text="18' " + less_than_or_equal_to + " x " + "< 20'" + "\nbottom text", relief="solid", borderwidth=1, width=15)
-        self.range_label3 = tk.Label(self.label_frame, text="20' " + less_than_or_equal_to + " x " + "< 21'" + "\nbottom text", relief="solid", borderwidth=1, width=15)
-        self.range_label4 = tk.Label(self.label_frame, text="21' " + less_than_or_equal_to + " x " + "< 22'" + "\nbottom text", relief="solid", borderwidth=1, width=15)
-        self.range_label5 = tk.Label(self.label_frame, text="22' " + less_than_or_equal_to + " x " + "< 24'" + "\nbottom text", relief="solid", borderwidth=1, width=15)
-        self.range_label6 = tk.Label(self.label_frame, text="24' " + less_than_or_equal_to + " x " + "< 36'" + "\nbottom text", relief="solid", borderwidth=1, width=15)
-        self.range_label7 = tk.Label(self.label_frame, text="36' " + less_than_or_equal_to + " x " + "< 42'" + "\nbottom text", relief="solid", borderwidth=1, width=15)
-        self.range_label8 = tk.Label(self.label_frame, text="42' " + greater_than_or_equal_to + " x " + "\nbottom text", relief="solid", borderwidth=1, width=15)
+        self.range_label1 = tk.Label(self.label_frame, text="x < 18'", relief="solid", borderwidth=1, width=15)
+        self.range_label2 = tk.Label(self.label_frame, text="18' " + less_than_or_equal_to + " x " + "< 20'", relief="solid", borderwidth=1, width=15)
+        self.range_label3 = tk.Label(self.label_frame, text="20' " + less_than_or_equal_to + " x " + "< 21'", relief="solid", borderwidth=1, width=15)
+        self.range_label4 = tk.Label(self.label_frame, text="21' " + less_than_or_equal_to + " x " + "< 22'", relief="solid", borderwidth=1, width=15)
+        self.range_label5 = tk.Label(self.label_frame, text="22' " + less_than_or_equal_to + " x " + "< 24'", relief="solid", borderwidth=1, width=15)
+        self.range_label6 = tk.Label(self.label_frame, text="24' " + less_than_or_equal_to + " x " + "< 36'", relief="solid", borderwidth=1, width=15)
+        self.range_label7 = tk.Label(self.label_frame, text="36' " + less_than_or_equal_to + " x " + "< 42'", relief="solid", borderwidth=1, width=15)
+        self.range_label8 = tk.Label(self.label_frame, text="42' " + greater_than_or_equal_to + " x ", relief="solid", borderwidth=1, width=15)
 
         #self.main_label.pack(side='left', padx=(20, 10), pady=10)
         #self.inv_label.pack(side='left', padx=(10, 20), pady=10)
 
         self.main_label.grid(column=0, row=0)
-        self.inv_label.grid(column=1, row=0)
+        #self.inv_label.grid(column=1, row=0)
         self.range_label1.grid(column=2, row=0)
         self.range_label2.grid(column=3, row=0)
         self.range_label3.grid(column=4, row=0)
@@ -155,10 +153,12 @@ class Main(tk.Frame):
 
         df_tree.pack(side=tk.TOP, fill=tk.BOTH, expand=True, padx=20)
 
+        # What happens when an item is selected in the tree
         def select_item(a):
 
             cur_item = df_tree.focus()
-            tree_selection_desc = df_tree.item(cur_item)['values'][5]
+            print(df_tree.item(cur_item)['values'][8])
+            tree_selection_desc = df_tree.item(cur_item)['values'][8]
             filtered_orders = open_orders[open_orders['Description'] == tree_selection_desc]
             sum_filtered_orders = filtered_orders['Ordered'].sum()
             filtered_inv = inventory[inventory['description'] == tree_selection_desc]
